@@ -18,17 +18,20 @@
  */
 U8G2_SSD1306_128X64_NONAME_F_SW_I2C u8g2(U8G2_R0, /* clock=*/ SCL, /* data=*/ SDA, /* reset=*/ U8X8_PIN_NONE);
 
+//Settting button pin numbers
+const int nextButton = 2;
+const int backButton = 3;
+const int screenOff = 4;
+
+//settting button inputs
+int nextbuttonState = 0;
+int backbuttonState = 0;
+int screenOffState = 0;
+
 //Setting variables for strings
 String directions = "Head south on 116 St NW toward Green & Gold Trl";
 String distance = "80 m";
-String left = "->";
-String right = "<-";
-int slightRight = 0x21d7;
-int slightLeft = 0x21d6;
-int straight = 0x23f6;
-
-//Finding the length of the strings
-int directionLength = directions.length();
+String maneuver = "left";
 
 //Starting text position for the direction instruction display
 int currentY = 10;
@@ -36,10 +39,32 @@ int currentY = 10;
 int updateRate = 2000;
 
 void setup(void) {
+  //Setting all of the buttons as inputs
+  pinMode(nextButton, INPUT);
+  pinMode(backButton, INPUT);
+  pinMode(screenOff, INPUT);
+
+  //Starting u8g2
   u8g2.begin();
 }
 
 void loop(void) {
+  //creating maneuversymbol variable
+  //Determines if maneuver contains left or right and will display arrow
+  String maneuverSymbol;
+  if (maneuver.indexOf("left") != -1) { 
+      maneuverSymbol = "<-"; 
+  } else if (maneuver.indexOf("right") != -1) { 
+     maneuverSymbol = "->"; 
+  } else { 
+     maneuverSymbol = " "; 
+  }
+
+  //Reading the button state
+  nextbuttonState = digitalRead(nextButton);
+  backbuttonState = digitalRead(backButton);
+  screenOffState = digitalRead(screenOff);
+    
   u8g2.clearBuffer(); // clear the internal memory
   u8g2.setFont(u8g2_font_ncenB08_tr); // choose a suitable font
 
@@ -77,8 +102,8 @@ void loop(void) {
 
   // Segment 3
   // Limit text to 10 characters
-  u8g2.setFont(u8g2_font_unifont_t_symbols);
-  u8g2.drawGlyph(95, 55, slightRight); // Draw an arrow
+  u8g2.setCursor(95, 55);
+  u8g2.print(maneuverSymbol);// Draw an arrow
 
   u8g2.sendBuffer(); // transfer internal memory to the display
   delay(updateRate); // Delay for the update
