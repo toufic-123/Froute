@@ -61,13 +61,13 @@ void loop(void) {
   nextbuttonState = digitalRead(nextButton);
   backbuttonState = digitalRead(backButton);
 
-  if (buttonState1 == HIGH) {
+  if (nextbuttonState == HIGH) {
     // turn LED on:
     //Insert code for going to next
     delay(1000);
   } 
   // check if pushbutton2 is pressed. If it is, the buttonState2 is HIGH:
-  else if (buttonState2 == HIGH) {
+  else if (backbuttonState == HIGH) {
     // turn LED off:
     //Insert code for going to previous
     delay(1000);
