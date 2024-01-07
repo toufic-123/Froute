@@ -3,6 +3,8 @@
 const byte numChars = 32;
 char receivedChars[numChars];   // an array to store the received data
 
+
+boolean message_received = false;
 boolean newData = false;
 
 void setup() {
@@ -11,8 +13,13 @@ void setup() {
 }
 
 void loop() {
-    recvWithEndMarker();
-    showNewData();
+    if (message_received == false){
+        recvWithEndMarker();
+        showNewData();  
+    } else {
+        delay(1);
+        sendMessage("Wazzup!\n");
+    }
 }
 
 void recvWithEndMarker() {
@@ -40,8 +47,12 @@ void recvWithEndMarker() {
 
 void showNewData() {
     if (newData == true) {
-        Serial.print("This just in ... ");
-        Serial.println(receivedChars);
+//        Serial.print("This just in ... ");
+//        Serial.println(receivedChars);
         newData = false;
     }
+}
+
+void sendMessage(String msg) {
+    Serial.print(msg);
 }
