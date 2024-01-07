@@ -19,19 +19,16 @@
 U8G2_SSD1306_128X64_NONAME_F_SW_I2C u8g2(U8G2_R2, /* clock=*/ SCL, /* data=*/ SDA, /* reset=*/ U8X8_PIN_NONE);
 
 //Settting button pin numbers
-const int nextButton = 2;
-const int backButton = 3;
-const int screenOff = 4;
+const int BUTTON_NUM = 2;
+const int BUTTON_PINS[BUTTON_NUM] = {3,4};
 
-//settting button inputs
-int nextbuttonState = 0;
-int backbuttonState = 0;
-int screenOffState = 0;
+ezButton buttons[BUTTON_NUM] = {ezButton(BUTTON_PINS[0]), ezButton(BUTTON_PINS[1])};
+
 
 //Setting variables for strings
-String directions = "Head south on 116 St NW toward Green & Gold Trl";
-String distance = "80 m";
-String maneuver = "left";
+String directions = "x";
+String distance = "x";
+String maneuver = "x";
 
 //Starting text position for the direction instruction display
 int currentY = 10;
@@ -39,16 +36,15 @@ int currentY = 10;
 int updateRate = 2000;
 
 void setup(void) {
-  //Setting all of the buttons as inputs
-  pinMode(nextButton, INPUT);
-  pinMode(backButton, INPUT);
-  pinMode(screenOff, INPUT);
+  //Serial needed for ezbutton
 
   //Starting u8g2
   u8g2.begin();
 }
 
 void loop(void) {
+
+      
   //creating maneuversymbol variable
   //Determines if maneuver contains left or right and will display arrow
   String maneuverSymbol;
@@ -60,10 +56,6 @@ void loop(void) {
      maneuverSymbol = " "; 
   }
 
-  //Reading the button state
-  nextbuttonState = digitalRead(nextButton);
-  backbuttonState = digitalRead(backButton);
-  screenOffState = digitalRead(screenOff);
     
   u8g2.clearBuffer(); // clear the internal memory
   u8g2.setFont(u8g2_font_ncenB08_tr); // choose a suitable font
@@ -97,7 +89,7 @@ void loop(void) {
   // Segment 2 (Large numbers)
   u8g2.setFont(u8g2_font_ncenB14_tr); // Choose a larger font
   u8g2.setCursor(0, 55); // Adjust vertical spacing
-  u8g2.print("1234m");
+  u8g2.print(distance);
 
 
   // Segment 3
