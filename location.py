@@ -53,7 +53,7 @@ def get_directions(origin, destination):
 
 def parse_json(json):
     parsed_steps = []
-    print(json[0])
+    # print(json[0])
     leg = json[0].get('legs')[0]
     steps = leg.get('steps')
     for step in steps:
@@ -98,7 +98,7 @@ def main():
         "location_name": rand_location.get('name')
         }
 
-    # pprint(json_response)
+    pprint(json_response)
 
     return json_response
 

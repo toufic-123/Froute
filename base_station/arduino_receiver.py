@@ -1,4 +1,5 @@
 import bluetooth
+import time
 
 DELIMETER = '\n'
 GARBAGE = '`'
@@ -18,7 +19,7 @@ class ArduinoComms():
             data += '\n'
         self.client_sock.send(data)
         print(f"Sent data: {data}")
-        
+        time.sleep(1)
 
         # self.client_sock.close()
 

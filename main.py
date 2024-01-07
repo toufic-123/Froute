@@ -37,9 +37,14 @@ class Froute():
     def phase2(self):
         self.state = QUERYING
         print("Starting Querying...")
-        location_response = location.main()
-        self.arduinocomms.send_data_to_arduino(location_response['location_name'])
-        time.sleep(1)
+        # location_response = location.main()
+        for i in range(2):
+            self.arduinocomms.send_data_to_arduino(f"distance {i}")
+            self.arduinocomms.send_data_to_arduino(f"instruction {i}")
+            self.arduinocomms.send_data_to_arduino(f"maneuver {i}")
+
+        self.arduinocomms.send_data_to_arduino("STOP")
+
         return
 
 
