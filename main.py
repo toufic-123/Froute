@@ -20,6 +20,9 @@ class Froute():
         self.state = None
         self.msg_queue = []
 
+        time.sleep(3)
+        self.arduinocomms.send_data_to_arduino("hello world")
+
     def phase1(self):
         self.state = WAITING
         print("Starting Waiting...")
@@ -37,13 +40,16 @@ class Froute():
     def phase2(self):
         self.state = QUERYING
         print("Starting Querying...")
-        # location_response = location.main()
-        for i in range(2):
-            self.arduinocomms.send_data_to_arduino(f"distance {i}")
-            self.arduinocomms.send_data_to_arduino(f"instruction {i}")
-            self.arduinocomms.send_data_to_arduino(f"maneuver {i}")
+        location_response = location.main()
+        self.arduinocomms.send_data_to_arduino(f"{location_response['location_name']}")
+        # for i in range(2):
+        #     self.arduinocomms.send_data_to_arduino(f"distance {i}")
+        #     self.arduinocomms.send_data_to_arduino(f"instruction {i}")
+        #     self.arduinocomms.send_data_to_arduino(f"maneuver {i}")
 
-        self.arduinocomms.send_data_to_arduino("STOP")
+        # self.arduinocomms.send_data_to_arduino("STOP")
+
+        
 
         return
 
@@ -53,8 +59,8 @@ class Froute():
 
 def main():
     froute = Froute()
-    froute.phase1()
-    froute.phase2()
+    # froute.phase1()
+    # froute.phase2()
 
      
 

@@ -1,9 +1,7 @@
-#include <Arduino.h>
 //Documentation for the U8g2lib is available here:
 //https://github.com/olikraus/u8g2/wiki/u8g2reference#drawbitmap
 #include <U8g2lib.h>
 #include <Wire.h> //Wire.h needed since the screen uses I2C
-#include <ezButton.h> 
 
 /* configuring u8g2
  *  SSD1306 based OLED display
@@ -18,18 +16,14 @@
  */
 U8G2_SSD1306_128X64_NONAME_F_SW_I2C u8g2(U8G2_R2, /* clock=*/ SCL, /* data=*/ SDA, /* reset=*/ U8X8_PIN_NONE);
 
-//Settting button pin numbers
-const int nextButton = 3;
-const int backButton = 4;
-
-//settting button inputs
-int nextbuttonState = 0;
-int backbuttonState = 0;
-
 //Setting variables for strings
-String directions = "Head south on 116 St NW toward Green & Gold Trl";
-String distance = "80 m";
-String maneuver = "left";
+String directions = "NA";
+String distance = "N";
+
+boolean newData = false;
+const byte numChars = 50;
+char receivedChars[numChars];   // an array to store the received data
+
 
 //Starting text position for the direction instruction display
 int currentY = 10;
@@ -38,41 +32,40 @@ int updateRate = 2000;
 
 void setup(void) {
   //Setting all of the buttons as inputs
-  pinMode(nextButton, INPUT);
-  pinMode(backButton, INPUT);
 
   //Starting u8g2
   u8g2.begin();
+  Serial.begin(38400);
+  delay(50);
+  Serial.flush();
+  Serial.print("START\n");
+  Serial.print("check\n");
 }
 
 void loop(void) {
+  while (directions == "NA") {
+    recvWithEndMarker();
+    for (int i = 0; i < 10; i++) {
+      Serial.print(directions[i]);
+    }
+    Serial.print("\n");  
+  }
+ 
+  
   //creating maneuversymbol variable
   //Determines if maneuver contains left or right and will display arrow
   String maneuverSymbol;
-  if (maneuver.indexOf("left") != -1) { 
+  if (distance.indexOf("left") != -1) { 
       maneuverSymbol = "<-"; 
-  } else if (maneuver.indexOf("right") != -1) { 
+  } else if (distance.indexOf("right") != -1) { 
      maneuverSymbol = "->"; 
   } else { 
      maneuverSymbol = " "; 
   }
 
   //Reading the button state
-  nextbuttonState = digitalRead(nextButton);
-  backbuttonState = digitalRead(backButton);
-
-  if (buttonState1 == HIGH) {
-    // turn LED on:
-    //Insert code for going to next
-    delay(1000);
-  } 
-  // check if pushbutton2 is pressed. If it is, the buttonState2 is HIGH:
-  else if (buttonState2 == HIGH) {
-    // turn LED off:
-    //Insert code for going to previous
-    delay(1000);
-  }
-    
+ 
+   
   u8g2.clearBuffer(); // clear the internal memory
   u8g2.setFont(u8g2_font_ncenB08_tr); // choose a suitable font
 
@@ -117,4 +110,30 @@ void loop(void) {
   delay(updateRate); // Delay for the update
   currentY = 10;
 
+}
+
+void recvWithEndMarker() {
+    static byte ndx = 0;
+    char endMarker = '\n';
+    char rc;
+    
+    while (Serial.available() > 0 && newData == false) {
+        rc = Serial.read();
+        Serial.print(rc);
+        delay(50);
+
+        if (rc != endMarker) {
+            receivedChars[ndx] = rc;
+            ndx++;
+            if (ndx >= numChars) {
+                ndx = numChars - 1;
+            }
+        } 
+        else {
+            receivedChars[ndx] = '\0'; // terminate the string
+            ndx = 0;
+            newData = true;
+        }
+    }
+       
 }
