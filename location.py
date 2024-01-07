@@ -5,9 +5,6 @@ import urllib.request
 import json
 from pprint import pprint
 
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.support.ui import WebDriverWait
 import time
 
 import re
@@ -43,7 +40,7 @@ def get_surrounding_locations(location, search_string,distance):
     return response
 
 def get_random_location(business_list):
-    rand = random.randint(0, len(business_list))
+    rand = random.randint(0, len(business_list)-1)
     return business_list[rand]
 
 def get_directions(origin, destination):
@@ -96,11 +93,16 @@ def main():
 
     parsed_steps = parse_json(directions)
 
-    json_response = {"parsed_json": parsed_steps,
-                     "location_name":rand_location.get('name')}
-    
-    pprint(json_response)
+    json_response = {
+        "parsed_json": parsed_steps,
+        "location_name": rand_location.get('name')
+        }
+
+    # pprint(json_response)
+
+    return json_response
 
     # send json with steps and name of location
 
-main()
+if __name__ == "__main__":
+    main()

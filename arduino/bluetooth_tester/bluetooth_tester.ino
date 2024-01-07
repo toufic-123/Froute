@@ -1,25 +1,20 @@
 // Example 2 - Receive with an end-marker
 
-const byte numChars = 32;
+const byte numChars = 256;
 char receivedChars[numChars];   // an array to store the received data
 
-
-boolean message_received = false;
 boolean newData = false;
 
 void setup() {
     Serial.begin(9600);
-    Serial.println("<Arduino is ready>");
+    delay(1000);
+    Serial.print("`");
+    Serial.print("START\n");
 }
 
 void loop() {
-    if (message_received == false){
-        recvWithEndMarker();
-        showNewData();  
-    } else {
-        delay(1);
-        sendMessage("Wazzup!\n");
-    }
+    recvWithEndMarker();
+    showNewData();  
 }
 
 void recvWithEndMarker() {
@@ -47,12 +42,8 @@ void recvWithEndMarker() {
 
 void showNewData() {
     if (newData == true) {
-//        Serial.print("This just in ... ");
-//        Serial.println(receivedChars);
+        Serial.print("This just in ... ");
+        Serial.println(receivedChars);
         newData = false;
     }
-}
-
-void sendMessage(String msg) {
-    Serial.print(msg);
 }
