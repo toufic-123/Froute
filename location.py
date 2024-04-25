@@ -11,7 +11,7 @@ import re
 
 
 
-API_KEY = "AIzaSyDqrIC47PIDREpzX_f-wdtY6ISPtqDPhA0"
+API_KEY = ""
 map_client = googlemaps.Client(API_KEY)
 directions_endpoint = "https://maps.googleapis.com/maps/api/directions/json?"
 geocode_endpoint = "https://maps.googleapis.com/maps/api/geocode/json?"
