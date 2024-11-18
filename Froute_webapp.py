@@ -3,12 +3,12 @@ import googlemaps
 import geocoder #Geocoder for location based off of IP
 import random #RNG library
 import re
+import os
 
 app = Flask(__name__)
 
-#Initiating google maps API with API key
-#(IP locked currently for dev)
-API_KEY = "AIzaSyAymdz3I4ZptouFld9-mzddtMm7z2j_rL4"
+
+API_KEY = os.getenv("GOOGLE_MAPS_API_KEY")
 map_client = googlemaps.Client(API_KEY)
 
 #Function to get (lat, long) using the geocoding library (Wasn't working well)
