@@ -15,19 +15,45 @@
         <button type="submit">Find Place</button>
     </form>
 
+    <button onclick="getLocation()">Get My Location</button>
+
     <h2>Results:</h2>
     <div id="result">
         <!-- This is where the result will appear -->
     </div>
 
     <script>
+        let userLocation = null;  // Variable to store the location coordinates
+
+        // Function to get the location from the browser
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    const latitude = position.coords.latitude;
+                    const longitude = position.coords.longitude;
+                    userLocation = { latitude, longitude };  // Store the location
+
+                    alert("Location acquired: " + latitude + ", " + longitude);  // Optional: Alert to confirm location
+                });
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        }
+
+        // Event listener for form submission
         document.getElementById("searchForm").addEventListener("submit", async function(event) {
-            event.preventDefault(); // Prevent form from submitting normally
-            
+            event.preventDefault();  // Prevent form from submitting normally
+
+            // Ensure that the location has been acquired before sending the request
+            if (!userLocation) {
+                alert("Please get your location first.");
+                return;
+            }
+
             let searchString = document.getElementById("search").value;
             let distance = document.getElementById("distance").value;
 
-            // Fetch data from the backend
+            // Send search parameters and location to the backend
             let response = await fetch("/get-place", {
                 method: "POST",
                 headers: {
@@ -35,12 +61,14 @@
                 },
                 body: JSON.stringify({
                     search_string: searchString,
-                    distance: distance
+                    distance: distance,
+                    latitude: userLocation.latitude,
+                    longitude: userLocation.longitude
                 })
             });
 
             let data = await response.json();
-            
+
             if (data.error) {
                 document.getElementById("result").innerText = "Error: " + data.error;
             } else {

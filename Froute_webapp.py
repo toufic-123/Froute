@@ -7,9 +7,8 @@ from dotenv import load_dotenv
 import os
 
 #Addewd line here to test if git command line works
-# Load environment variables from the .env file
-load_dotenv()
-
+# Load environment variables from the .env file (only keep for dev)
+load_dotenv(override=True)
 app = Flask(__name__)
 
 # Access the API key
@@ -17,6 +16,7 @@ API_KEY = os.getenv("GOOGLE_MAPS_API_KEY")
 
 if not API_KEY:
     raise ValueError("Google Maps API key is missing. Check your .env file.")
+print(f"API Key: {API_KEY}")
 
 map_client = googlemaps.Client(API_KEY)
 
@@ -90,9 +90,12 @@ def index():
 #The following is to actually load the page after a place is found.
 @app.route('/get-place', methods=['POST'])
 def get_place_route():
-    location = get_my_location()  # Get the user's location
-    search_string = request.json.get('search_string', 'restaurant')  # Get search keyword
-    distance = request.json.get('distance', 1000)  # Get search radius (1000 is a default value)
+    data = request.get_json()
+    latitude = data.get('latitude')  # User's latitude
+    longitude = data.get('longitude')  # User's longitude
+    location = (latitude, longitude)  # Create a tuple for location
+    search_string = data.get('search_string', 'restaurant')  # Search keyword (defaults to 'restaurant')
+    distance = data.get('distance', 1000)  # Search radius (defaults to 1000 meters)
 
     # Find nearby places based on the search string and radius
     response = get_surrounding_locations(location, search_string, distance)
@@ -113,6 +116,16 @@ def get_place_route():
         "place_name": rand_location.get('name'),
         "google_maps_url": place_url
     })
+@app.route('/get-location', methods=['POST'])
+def get_location():
+    data = request.get_json()
+    latitude = data.get('latitude')
+    longitude = data.get('longitude')
+    
+    # Use Google Maps or any other service to get more info from coordinates
+    location_info = map_client.reverse_geocode((latitude, longitude))
+    
+    return jsonify(location_info)
 
 
 #Debugging stuff for when the script is run directly
