@@ -6,6 +6,7 @@ import re
 from dotenv import load_dotenv
 import os
 
+#Addewd line here to test if git command line works
 # Load environment variables from the .env file
 load_dotenv()
 
