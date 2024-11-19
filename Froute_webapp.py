@@ -3,12 +3,21 @@ import googlemaps
 import geocoder #Geocoder for location based off of IP
 import random #RNG library
 import re
+from dotenv import load_dotenv
 import os
+
+# Load environment variables from the .env file
+load_dotenv()
 
 app = Flask(__name__)
 
 
+# Access the API key
 API_KEY = os.getenv("GOOGLE_MAPS_API_KEY")
+
+if not API_KEY:
+    raise ValueError("Google Maps API key is missing. Check your .env file.")
+
 map_client = googlemaps.Client(API_KEY)
 
 #Function to get (lat, long) using the geocoding library (Wasn't working well)
