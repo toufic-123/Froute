@@ -6,7 +6,7 @@ import re
 from dotenv import load_dotenv
 import os
 
-#Addewd line here to test if git command line works
+#Added line here to test if git command line works
 # Load environment variables from the .env file (only keep for dev)
 load_dotenv(override=True)
 app = Flask(__name__)
@@ -127,6 +127,9 @@ def get_location():
     
     return jsonify(location_info)
 
+@app.route("/ping")
+def ping():
+    return "pong", 200
 
 #Debugging stuff for when the script is run directly
 if __name__ == "__main__":
